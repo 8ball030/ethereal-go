@@ -27,7 +27,7 @@ type LimitOrder struct {
 	Side                 int64  `json:"side"` // 0 BUY, 1 SELL
 	OnchainID            int64  `json:"onchainId"`
 	EngineType           int64  `json:"engineType"` // enum
-	ClientOrderID        string `json:"clientOrderId"`
+	ClientOrderID        string `json:"clientOrderId,omitempty"`
 	ReduceOnly           bool   `json:"reduceOnly"`
 	Close                bool   `json:"close,omitempty"`
 	StopPrice            int64  `json:"stopPrice,omitempty"`
