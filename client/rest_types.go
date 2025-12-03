@@ -53,9 +53,9 @@ type Order struct {
 	Nonce                string      `json:"nonce"` // string of nanoseconds
 	Type                 OrderType   `json:"type"`  // LIMIT or MARKET
 	Quantity             string      `json:"quantity"`
-	Side                 OrderSide   `json:"side"` // 0 BUY, 1 SELL TODO: enum
+	Side                 OrderSide   `json:"side"` // 0 BUY, 1 SELL
 	OnchainID            int64       `json:"onchainId"`
-	EngineType           EngineType  `json:"engineType"` // TODO: enum
+	EngineType           EngineType  `json:"engineType"`
 	ClientOrderID        string      `json:"clientOrderId,omitempty"`
 	ReduceOnly           bool        `json:"reduceOnly"`
 	Close                bool        `json:"close,omitempty"`

@@ -11,7 +11,7 @@ Lightweight golang client for interacting with the Ethereal API.
 - Automatic nonce and timestamp handling
 - Minimal dependencies
 - Easy to extend with new message types
-- Socket.IO streaming support (WIP)
+- Socket.IO streaming support
 
 Getting started
 ---------------
@@ -54,17 +54,16 @@ func main() {
     log.Printf("Order created: %+v\n", res)
 }
 ```
-For more complete usage examples (batching, cancel orders, typed data inspection, etc.),
+For more complete usage examples (batching, cancel orders, websocket subscriptions, etc.),
 see the [examples/](./examples/) folder in this repository.
 
 Configuration Notes
 -----
 - If no private key is passed to `NewEtherealClient`, the library uses the `ETHEREAL_PK` environment variable.
-- Only one subaccount is currently supported; by default the first one discovered is used.
 - All signable request messages implement the `Signable` interface.
-
+- Only one subaccount is currently supported; by default the first one discovered is used.
 
 Status
 -----
-- Work in progress.
-- Current active development: Socket.IO streaming (order books, trades, events).
+- Most of the client is complete, and easy to expand.
+- Other methods will be added as needed.

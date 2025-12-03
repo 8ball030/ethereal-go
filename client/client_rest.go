@@ -20,7 +20,7 @@ const USER_AGENT = "ethereal-go-sdk/1.0.0"
 type EtherealClient struct {
 	baseURL    string
 	http       *http.Client
-	subaccount *Subaccount
+	Subaccount *Subaccount
 	types      *abi.TypedData
 	pk         *ecdsa.PrivateKey
 	address    string
@@ -161,7 +161,7 @@ func (e *EtherealClient) InitSubaccount(ctx context.Context) error {
 	if len(resp.Data) == 0 {
 		return errors.New("no subaccounts found")
 	}
-	e.subaccount = &resp.Data[0] // NOTE: currently only one subaccount per client is supported
+	e.Subaccount = &resp.Data[0] // NOTE: currently only one subaccount per client is supported
 
 	return nil
 }

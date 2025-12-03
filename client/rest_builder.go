@@ -62,7 +62,7 @@ func (o *Order) toMessage() (abi.TypedDataMessage, error) {
 
 func (o *Order) build(cl *EtherealClient) {
 	o.Sender = cl.address
-	o.Subaccount = cl.subaccount.Name
+	o.Subaccount = cl.Subaccount.Name
 	nonce := getNonce()
 
 	o.Nonce = nonce
@@ -95,7 +95,7 @@ func (o *CancelOrder) toMessage() (abi.TypedDataMessage, error) {
 
 func (o *CancelOrder) build(cl *EtherealClient) {
 	o.Sender = cl.address
-	o.Subaccount = cl.subaccount.Name
+	o.Subaccount = cl.Subaccount.Name
 
 	o.Nonce = getNonce()
 }
