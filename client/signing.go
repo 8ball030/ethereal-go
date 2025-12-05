@@ -35,7 +35,7 @@ func ParseTypeSchema(typeString string) ([]abi.Type, error) {
 	return args, nil
 }
 
-func scale1e9(s string) (*big.Int, error) {
+func Scale1e9(s string) (*big.Int, error) {
 	r := new(big.Rat)
 	if _, ok := r.SetString(s); !ok {
 		return nil, fmt.Errorf("bad decimal %q", s)
@@ -55,11 +55,11 @@ func strip0x(s string) string {
 
 type Signable interface {
 	build(*EtherealClient)
-	toMessage() (abi.TypedDataMessage, error)
+	ToMessage() (abi.TypedDataMessage, error)
 }
 
 func Sign(message Signable, primaryType string, cl *EtherealClient) (string, error) {
-	msg, err := message.toMessage()
+	msg, err := message.ToMessage()
 	if err != nil {
 		return "", err
 	}

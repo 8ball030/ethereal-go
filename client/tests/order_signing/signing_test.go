@@ -1,56 +1,12 @@
 package main
 
 import (
-	"fmt"
-	"math/big"
 	"testing"
 
 	"github.com/ethereum/go-ethereum/common"
 	abi "github.com/ethereum/go-ethereum/signer/core/apitypes"
 	ethereal "github.com/qiwi1272/ethereal-go/client"
 )
-
-func scale1e9(s string) (*big.Int, error) {
-	r := new(big.Rat)
-	if _, ok := r.SetString(s); !ok {
-		return nil, fmt.Errorf("bad decimal %q", s)
-	}
-	r.Mul(r, big.NewRat(1_000_000_000, 1))
-	n := new(big.Int)
-	n.Div(r.Num(), r.Denom())
-	return n, nil
-}
-
-func toMessage(o ethereal.Order) (abi.TypedDataMessage, error) {
-	qtyBig, err := scale1e9(o.Quantity)
-	if err != nil {
-		return abi.TypedDataMessage{}, err
-	}
-	priceBig, err := scale1e9(o.Price)
-	if err != nil {
-		return abi.TypedDataMessage{}, err
-	}
-
-	// even though we expect these values to be uint8 according to their signatures,
-	// setting them as native uint8 raises a compiler error. strings or big ints are accepted.
-	engine := big.NewInt(int64(o.EngineType))
-	side := big.NewInt(int64(o.Side))
-	id := big.NewInt(o.OnchainID)
-	sigTs := big.NewInt(o.SignedAt)
-
-	return abi.TypedDataMessage{
-		"sender":     o.Sender,
-		"subaccount": o.Subaccount,
-		"quantity":   qtyBig,
-		"price":      priceBig,
-		"reduceOnly": o.ReduceOnly,
-		"side":       side,
-		"engineType": engine,
-		"productId":  id,
-		"nonce":      o.Nonce,
-		"signedAt":   sigTs,
-	}, nil
-}
 
 func TestOrders(t *testing.T) {
 	orderType := abi.TypedData{
@@ -81,7 +37,7 @@ func TestOrders(t *testing.T) {
 		SignedAt:   int64(1764897077),
 	}
 
-	message, err := toMessage(order) // clone from signing.go
+	message, err := order.ToMessage()
 	if err != nil {
 		panic(err)
 	}
