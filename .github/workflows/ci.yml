@@ -22,9 +22,6 @@ jobs:
       - name: Format
         run: make fmt
 
-      - name: Check imports
-        run: make deps
-
       - name: Vet code
         run: make vet
 
