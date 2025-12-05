@@ -2,12 +2,11 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"math/big"
+	"testing"
 
 	"github.com/ethereum/go-ethereum/common"
 	abi "github.com/ethereum/go-ethereum/signer/core/apitypes"
-	"github.com/joho/godotenv"
 	ethereal "github.com/qiwi1272/ethereal-go/client"
 )
 
@@ -53,7 +52,7 @@ func toMessage(o ethereal.Order) (abi.TypedDataMessage, error) {
 	}, nil
 }
 
-func TestOrders() {
+func TestOrders(t *testing.T) {
 	orderType := abi.TypedData{
 		Types: abi.Types{"TradeOrder": []abi.Type{
 			{Name: "sender", Type: "address"},
@@ -166,13 +165,4 @@ func TestOrders() {
 	if common.Bytes2Hex(SignedAtBytes) != "0000000000000000000000000000000000000000000000000000000069323135" {
 		panic("SignedAtBytes")
 	}
-}
-
-func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-	TestOrders()
-	log.Println("Order validated")
 }
