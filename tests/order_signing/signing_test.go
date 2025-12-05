@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"math/big"
 	"testing"
 
@@ -87,9 +86,6 @@ func TestOrders(t *testing.T) {
 		panic(err)
 	}
 
-	log.Println("Validating order encoding...")
-	log.Printf("Order message: %+v\n", message)
-
 	SenderBytes, err := orderType.EncodePrimitiveValue(orderType.Types["TradeOrder"][0].Type, message["sender"], 2)
 	if err != nil {
 		panic(err)
@@ -170,12 +166,3 @@ func TestOrders(t *testing.T) {
 		panic("SignedAtBytes")
 	}
 }
-
-// func main() {
-// 	err := godotenv.Load()
-// 	if err != nil {
-// 		log.Fatal("Error loading .env file")
-// 	}
-// 	TestOrders(
-// 	log.Println("Order validated")
-// }
