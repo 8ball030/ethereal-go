@@ -121,18 +121,18 @@ func (e *EtherealClient) do(ctx context.Context, method, path string, body any) 
 }
 
 // ---------- Setup ----------
-func (e *EtherealClient) InitDomain(ctx context.Context) string {
+func (e *EtherealClient) InitDomain(ctx context.Context) (string, error) {
 	// init eip 712 data from rpc
 	data, err := e.do(ctx, "GET", "/v1/rpc/config", nil)
 	if err != nil {
-		panic("failed to fetch domain config: " + err.Error())
+		return "", err
 	}
 	var resp struct {
 		Domain   abi.TypedDataDomain `json:"domain"`
 		SigTypes map[string]string   `json:"signatureTypes"`
 	}
 	if err = json.Unmarshal(data, &resp); err != nil {
-		panic("failed to parse domain config: " + err.Error())
+		return "", err
 	}
 
 	// parse flattened type data
@@ -140,7 +140,7 @@ func (e *EtherealClient) InitDomain(ctx context.Context) string {
 	for primaryType, schema := range resp.SigTypes {
 		types, err := ParseTypeSchema(schema)
 		if err != nil {
-			panic("failed to parse type schema: " + err.Error())
+			return "", err
 		}
 		parsedTypes[primaryType] = types
 	}
@@ -161,7 +161,7 @@ func (e *EtherealClient) InitDomain(ctx context.Context) string {
 	if err != nil {
 		panic("failed to compute domain hash: " + err.Error())
 	}
-	return hex.EncodeToString(domainHash)
+	return hex.EncodeToString(domainHash), nil
 }
 
 func (e *EtherealClient) InitSubaccount(ctx context.Context) error {

@@ -153,7 +153,7 @@ func TestOrderSigning(t *testing.T) {
 
 	fmt.Println("Expected Signer address: ", client.Address)
 
-	domainHashString := client.InitDomain(cxt)
+	domainHashString, err := client.InitDomain(cxt)
 	if err != nil {
 		panic(err)
 	}
@@ -190,5 +190,17 @@ func TestOrderSigning(t *testing.T) {
 		panic("Signature does not match expected value")
 	}
 	fmt.Println("Order Signature:", signature)
+
+	// We extract the exact payload
+
+	payload := ethereal.SignedGenericMessage{
+		Data:      order,
+		Signature: signature,
+	}
+	payloadJson, err := json.MarshalIndent(payload, "", "  ")
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("Signed Order Payload JSON:\n", string(payloadJson))
 
 }
