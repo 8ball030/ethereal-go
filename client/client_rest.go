@@ -168,18 +168,6 @@ func (e *EtherealClient) InitSubaccount(ctx context.Context) error {
 
 // ---------- Methods ----------
 
-type intent string
-
-const (
-	Create intent = "TradeOrder"
-	Cancel intent = "CancelOrder"
-)
-
-var intentMap = map[intent]string{
-	Create: "/v1/order",
-	Cancel: "/v1/order/cancel",
-}
-
 func (e *EtherealClient) GetProductMap(ctx context.Context) (map[string]Product, error) {
 	data, err := e.do(ctx, "GET", "/v1/product", nil)
 	if err != nil {
