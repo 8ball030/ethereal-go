@@ -64,17 +64,12 @@ func Sign(message Signable, primaryType string, cl *EtherealClient) (string, err
 		return "", err
 	}
 
-	messageHash, err := cl.types.HashStruct(primaryType, msg)
+	messageHash, err := cl.Types.HashStruct(primaryType, msg)
 	if err != nil {
 		return "", err
 	}
 
-	fullHash := make([]byte, 0, 66)
-	fullHash = append(fullHash, 0x19, 0x01)
-	fullHash = append(fullHash, domainHash...)
-	fullHash = append(fullHash, messageHash...)
-
-	fullHash = crypto.Keccak256(fullHash)
+	fullHash := MakeFullHash(domainHash, messageHash)
 
 	sig, err := crypto.Sign(fullHash, cl.pk)
 	if err != nil {
@@ -83,4 +78,12 @@ func Sign(message Signable, primaryType string, cl *EtherealClient) (string, err
 	sig[64] += 27 // recovery byte fix  |  much love to _0xmer :)
 
 	return "0x" + hex.EncodeToString(sig), nil
+}
+
+func MakeFullHash(domainHash []byte, messageHash []byte) []byte {
+	fullHash := make([]byte, 0, 66)
+	fullHash = append(fullHash, 0x19, 0x01)
+	fullHash = append(fullHash, domainHash...)
+	fullHash = append(fullHash, messageHash...)
+	return crypto.Keccak256(fullHash)
 }

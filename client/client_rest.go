@@ -22,9 +22,9 @@ type EtherealClient struct {
 	baseURL    string
 	http       *http.Client
 	Subaccount *Subaccount
-	types      *abi.TypedData
+	Types      *abi.TypedData
 	pk         *ecdsa.PrivateKey
-	address    string
+	Address    string
 }
 
 type Subaccount struct {
@@ -70,7 +70,7 @@ func NewEtherealClient(ctx context.Context, pk string, env Environment) (*Ethere
 	if err != nil {
 		return nil, errors.New("unable to parse private key, likely invalid format")
 	}
-	client.address = crypto.PubkeyToAddress(client.pk.PublicKey).Hex()
+	client.Address = crypto.PubkeyToAddress(client.pk.PublicKey).Hex()
 	// ethereal env setup
 	client.InitDomain(ctx)
 
@@ -152,12 +152,12 @@ func (e *EtherealClient) InitDomain(ctx context.Context) string {
 		{Name: "verifyingContract", Type: "address"},
 	}
 
-	e.types = &abi.TypedData{
+	e.Types = &abi.TypedData{
 		Types:  parsedTypes,
 		Domain: resp.Domain,
 	}
 	// precompute domain hash, store globally
-	domainHash, err = e.types.HashStruct("EIP712Domain", e.types.Domain.Map())
+	domainHash, err = e.Types.HashStruct("EIP712Domain", e.Types.Domain.Map())
 	if err != nil {
 		panic("failed to compute domain hash: " + err.Error())
 	}
@@ -165,7 +165,7 @@ func (e *EtherealClient) InitDomain(ctx context.Context) string {
 }
 
 func (e *EtherealClient) InitSubaccount(ctx context.Context) error {
-	path := fmt.Sprintf("/v1/subaccount?sender=%s", e.address)
+	path := fmt.Sprintf("/v1/subaccount?sender=%s", e.Address)
 	data, err := e.do(ctx, "GET", path, nil)
 	if err != nil {
 		return err

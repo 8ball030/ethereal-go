@@ -2,8 +2,10 @@ package main
 
 import (
 	"context"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -26,6 +28,10 @@ func getTestOrder() ethereal.Order {
 	}
 }
 
+func reverseHex(s string) ([]byte, error) {
+	clean := strings.TrimPrefix(s, "0x")
+	return hex.DecodeString(clean)
+}
 func TestOrders(t *testing.T) {
 	orderType := abi.TypedData{
 		Types: abi.Types{"TradeOrder": []abi.Type{
@@ -145,17 +151,44 @@ func TestOrderSigning(t *testing.T) {
 	pk := "0bb5d63b84421e1268dda020818ae30cf26e7f10e321fb820a8aa69216dea92a" // private key for 0xdeadbeef...
 	client, err := ethereal.NewEtherealClient(cxt, pk, ethereal.Testnet)
 
-	domainHash := client.InitDomain(cxt)
+	fmt.Println("Expected Signer address: ", client.Address)
+
+	domainHashString := client.InitDomain(cxt)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("Domain Hash:", domainHash)
+	fmt.Println("Domain Hash:", domainHashString)
 
+	expectedDomainHash := "baf501bc2614cf7092d082742580b04c176be1815f46e407eab1bc37ba543c05"
+	if domainHashString != expectedDomainHash {
+		panic("Domain hash does not match expected value")
+	}
+
+	msg, err := order.ToMessage()
+	if err != nil {
+		panic("Unable to convert order to message: " + err.Error())
+	}
+	messageHash, err := client.Types.HashStruct("TradeOrder", msg)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("Message Hash:", common.Bytes2Hex(messageHash))
 	signature, err := ethereal.Sign(&order, "TradeOrder", client)
 	if err != nil {
 		panic(err)
 	}
 
-	println("Order Signature:", signature)
+	domainBytes, err := reverseHex(domainHashString)
+	if err != nil {
+		panic(err)
+	}
+	fullHash := ethereal.MakeFullHash(domainBytes, messageHash)
+	fmt.Println("Full Hash:", common.Bytes2Hex(fullHash))
+
+	expectedSignature := "0x82aed7486e9855459f58537e413760597e689d3ba7b859f56b6edc730e044fff2888ccf92cd282a8299d8d6a76f8bf0aa93d97f30340c4bb0d27b626aca62f211b"
+	if signature != expectedSignature {
+		panic("Signature does not match expected value")
+	}
+	fmt.Println("Order Signature:", signature)
 
 }
